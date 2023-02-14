@@ -1,4 +1,4 @@
-**Modul 169**
+# Modul 169 - Services mit Containern bereitstellen
 
 Lino Steffen
 
@@ -14,25 +14,25 @@ Version 1.0
 
 # Inhaltsverzeichnis
 
-Tag 1 - Container Grundlagen
+Tag 1 - Docker Grundlagen
 
-Tag 2 - Befehle und Funktionen
+Tag 2 - Docker Images
 
-Tag 3 -
+Tag 3 - Docker Compose
 
-Tag 4 -
+Tag 4 - Repository
 
-Tag 5 -
+Tag 5 -	Kubernetes
 
-Tag 6 -
+Tag 6 -  Kubernetes Deployments
 
-Tag 7 -
+Tag 7 -  Kubernetes Loadbalancer
 
-Tag 8 -
+Tag 8 -  Überwachung
 
-Tag 9 -
+Tag 9 -  Projekt
 
-# Tag 1 - Container Grundlagen
+# Tag 1 - Docker Grundlagen
 
 ## Was sind Container und wo sind diese nützlich?
 
@@ -146,3 +146,247 @@ sudo docker exec 5a9cec2542cb sudo sed 's,autostart=false,autostart=true,' -i /e
 ## Screenshot OnlyOffice mit eigenem Namen und Datum im Dokument
 
 ![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/kYC5hnCJS59cD9Z9QB3_DVVz.png)
+
+
+
+# Tag 2 - Docker Images
+
+## App Version 1
+
+### Print Screen der Images bei GitLab
+
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/-kgH-_geyrXrT7OPagmyl_hO.png)
+
+### Alle Befehle für «Ein Image Pushen» → App V1
+
+
+
+**Wechsle ins Home Verzeichnis**
+
+```
+cd ~
+
+```
+
+**Clone git vom gitlab**
+
+```
+git clone git clone https://gitlab.com/thomas-staub/cloudmodules/m169/demobeispiele/to-do-appv1
+
+```
+
+**Im Ordner «web-fontend» todo-app image bauen**
+
+```
+docker image build -t todo-app:v1 .
+
+```
+
+**im Ordner «redis-slave» slave image bauen**
+
+```
+docker buils -t redis-slave:v1  .
+
+```
+
+**im Ordner «redis-master» master image bauen**
+
+```
+docker build -t redis-master:v1  .
+
+```
+
+**Gemeinsames Network erstellen**
+
+```
+docker network create todoapp_network
+
+```
+
+**docker run (master, slave, todo-app) version 1**
+
+```
+docker run --net=todoapp_network --name=redis-master -d redis-master:v1
+
+```
+
+```
+docker run --net=todoapp_network --name=redis-slave -d redis-slave:v1
+
+```
+
+Wurde vorhin dies schon erstellt haben, das alte mit `docker rm -f frontend` entfernen.
+
+```
+docker run --net=todoapp_network --name=frontend -d -p 3000:3000 todo-app:v1
+
+```
+
+**Login Gitlab**
+
+```
+docker login gitlab.iet-gibb.ch:5050
+
+```
+
+**image tagen (master, slave, todo-app) version 1**
+
+```
+docker image tag redis-master:v1 gitlab.iet-gibb.ch:5050/lst135928/169/to-do-appv1/redis-master:v1
+
+```
+
+```
+docker image tag redis-slave:v1 gitlab.iet-gibb.ch:5050/lst135928/169/to-do-appv1/redis-slave:v1
+
+```
+
+```
+docker image tag redis-todo-app:v1 gitlab.iet-gibb.ch:5050/lst135928/169/to-do-appv1/todo-appv1:v1
+
+```
+
+**push (master, slave, todo-app) version 1**
+
+```
+docker push gitlab.iet-gibb.ch:5050/lst135928/169/to-do-appv1/redis-master:v1
+
+```
+
+```
+docker push gitlab.iet-gibb.ch:5050/lst135928/169/to-do-appv1/redis-slave:v1
+
+```
+
+```
+docker push gitlab.iet-gibb.ch:5050/lst135928/169/to-do-appv1/todo-app:v1
+
+```
+
+## App Version 2 Frontend
+
+### Print Screen der Images bei GitLab
+
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/6Ys06SmMHkB8fg-nSLmkdJNi.png)
+
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/r7P2L8pFRctPhk0Pkta8gKDB.png)
+
+### Alle Befehle für «Ein Image Pushen» → App V2
+
+Zuvor das V1-frontent Image löschen → In Ordner `cd to-do-appv1/web-fontend/` wechseln. Und `docker rm -f frontend` anwenden.
+
+**Im Home (**`cd ~`**)v2 git repository clonen**
+
+```
+git clone https://gitlab.com/thomas-staub/cloudmodules/m169/demobeispiele/to-do-appv2
+
+```
+
+**Im Ordner «web-fontend» das neue todo-app image bauen**
+
+```
+docker image build -t todo-app:v2  .
+
+```
+
+**neues Image starten _(Da wir vorher das alte schon gelöscht haben sollte dies kein Problem sein)_**
+
+```
+docker run --net=todoapp_network --name=frontend -d -p 3000:3000 todo-app:v2
+
+```
+
+**image tagen todo-app Version 2**
+
+```
+docker image tag todo-app:v2 gitlab.iet-gibb.ch:5050/lst135928/169/to-do-appv2/todo-app:v2
+
+```
+
+**push todo-app Version 2**
+
+```
+docker push gitlab.iet-gibb.ch:5050/lst135928/169/to-do-appv2/todo-app:v2
+
+```
+
+
+
+## Zusammenfassung der wichtigsten Befehle und Ihre Funktion
+
+
+
+Docker Image erstellen
+
+```
+docker build .
+
+```
+
+Image tagen (mit repository name)
+
+```
+docker tag [imageid] [repositoryurl]
+
+```
+
+Image pushen
+
+```
+docker push [repositoryurl]
+
+```
+
+Docker komplett säubern
+
+```
+docker system prune  --all --volumes
+
+```
+
+Image von Repository pullen
+
+```
+docker pull [repositoryurl/imagename:tag]
+
+```
+
+# Tag 3 - Docker Compose
+
+xx
+
+
+
+# Tag 4 - Repository
+
+xx
+
+
+
+# Tag 5 -	Kubernetes
+
+xx
+
+
+
+# Tag 6 - Kubernetes Deployments
+
+xx
+
+
+
+# Tag 7 - Kubernetes Loadbalancer
+
+xx
+
+
+
+# Tag 8 - Überwachung
+
+xx
+
+
+
+# Tag 9 - Projekt
+
+xx
