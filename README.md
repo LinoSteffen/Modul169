@@ -446,7 +446,7 @@ als Container-ID reichen die ersten Ziffern der ID
 
 ### To-do-List docker-compose.yml
 
-Das Image wird von meinem gitlab genommen. Diese wo ich 2. Tag erstellt habe.
+Das Image wird von meinem gitlab genommen. Diese wo ich am 2. Tag erstellt habe.
 
 ```yaml
 version: "1"
@@ -497,7 +497,7 @@ services:
 
 ### App via Portainer installiert und im Portfolio festgehalten
 
-1. offne portainer
+1. öffne portainer
 1. local
 1. Gehe zu «stacks» und «add stack»
 1. name vergeben
@@ -516,7 +516,8 @@ services:
 
 1. docker compose installiert
 1. portainer installiert
-1. sock-shop installiert
+1. git clone sock-shop
+1. docker compose sock-shop
 
 
 
@@ -547,7 +548,7 @@ _Quelle:_ [https://microservices-demo.github.io/deployment/docker-compose.html](
 
 **docker-compose.yml**
 
-im Ordner /deploy/docker-compose/docker-compose.yml
+im Ordner ~/microservices-demo/deploy/docker-compose/docker-compose.yml
 
 # Tag 4 - Repository
 
