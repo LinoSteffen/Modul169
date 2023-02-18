@@ -8,7 +8,7 @@ Inf2021c
 
 03.02.2023
 
-Version 1.0
+Version 3.0
 
 
 
@@ -40,11 +40,13 @@ Container sind eine Form der virtuellen Isolation für Anwendungen und deren Abh
 
 Ein Vorteil von Containern ist, dass sie es ermöglichen, Anwendungen in produktionsreifen Umgebungen einfach bereitzustellen, zu überwachen und zu skalieren. Ausserdem können sie dabei helfen, Konflikte zwischen Abhängigkeiten verschiedener Anwendungen zu vermeiden.
 
-
+_Quelle: Internet + ich_
 
 ## Was ist DevOps?
 
 DevOps ist eine Kultur, die eine enge Zusammenarbeit und Kommunikation zwischen Entwicklung und Betriebsteams fördert, um sicherzustellen, dass Anwendungen und Dienste schneller und zuverlässiger bereitgestellt werden können.
+
+_Quelle: Internet_
 
 ![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/HZIyS9czUHMAKMQOPczPCtS0.png)
 
@@ -56,7 +58,7 @@ Die **Virtualisierung** nutzt eine virtuelle Maschine (VM), um ein vollständige
 
 Die **Containerisierung** nutzt einen Container, um nur die Anwendung und ihre Abhängigkeiten zu isolieren. Containers teilen sich das Betriebssystem des Hosts, wodurch sie weniger Ressourcen verbrauchen und schneller gestartet werden können als VMs. Containers sind für die Portabilität und Übertragbarkeit von Anwendungen ausgelegt und bieten eine höhere Effizienz als VMs.
 
-
+_Quelle: Internet + ich_
 
 ## Unterschied Image und Container
 
@@ -64,7 +66,7 @@ Ein **Image** ist eine Vorlage für einen Container, die alle notwendigen Dateie
 
 Ein Container ist eine isolierte Instanz einer Anwendung, die auf einem Host ausgeführt wird. Es nutzt das Betriebssystem des Hosts, aber ist durch eine isolierte Umgebung abgeschirmt, sodass es unabhängig von anderen Containern auf demselben Host ausgeführt werden kann. Jeder Container wird aus einem Image erstellt und kann eigene Einstellungen und Daten haben, die unabhängig von anderen Containern sind.
 
-
+_Quelle: Internet + ich_
 
 ## Wichtigsten Befehle und ihre Funktion
 
@@ -353,9 +355,199 @@ docker pull [repositoryurl/imagename:tag]
 
 # Tag 3 - Docker Compose
 
-xx
+## Docker-Kommandoreferenz
+
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/yda2xX7u4PvZmKMt4SQp_CQH.png)
+
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/NI29BWL-bTQiXEvHshDfB2Qa.png)
+
+## Was ist Docker Compose
+
+Docker Compose ist ein Tool, das verwendet wird, um mehrere Docker-Container zusammen zu gruppieren und als eine Anwendung auszuführen. Mit Docker Compose kann man komplexe Anwendungen aus mehreren Containern definieren, die zusammenarbeiten müssen, und sie dann einfach mit einem einzigen Befehl starten, stoppen und verwalten. Dadurch wird die Verwaltung von Docker-Containern vereinfacht und automatisiert.
+
+_Quelle: Internet + ich_
+
+## Version 2 der App mit Docker Compose zum Laufen gebracht.
+
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/bb5bobNmHlnsqeCHtDZmDhGW.png)
+
+### Vorgehen
+
+1. docker compose installieren
+1. Ordner und docker-compose.yml file erstellen
+1. docker compose
+
+### Befehle
 
 
+
+**docker compose installieren**
+
+Compose CLI-Plugin herunterzuladen und zu installieren
+
+```
+DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+mkdir -p $DOCKER_CONFIG/cli-plugins
+curl -SL https://github.com/docker/compose/releases/download/v2.16.0/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+
+```
+
+Ausführungsberechtigungen auf die Binärdatei anwenden
+
+```
+chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+
+```
+
+Installation testen. - docker compose Version anzeigen.
+
+```
+docker compose version
+
+```
+
+Mehr Informationen unter: [https://docs.docker.com/compose/install/linux/#install-using-the-repository](https://docs.docker.com/compose/install/linux/#install-using-the-repository)
+
+
+
+**docker compose up**
+
+```yaml
+docker compose -f docker-compose.yml up -d
+
+```
+
+**docker compose down**
+
+```yaml
+docker compose -f docker-compose.yml down
+
+```
+
+
+
+**Container log ansehen**
+
+```yaml
+docker logs <container id>
+
+```
+
+**Container live log ansehen**
+
+```yaml
+docker logs -f <container id> 
+
+```
+
+als Container-ID reichen die ersten Ziffern der ID
+
+
+
+### To-do-List docker-compose.yml
+
+Das Image wird von meinem gitlab genommen. Diese wo ich 2. Tag erstellt habe.
+
+```yaml
+version: "1"
+services:
+  todoapp:
+    image: gitlab.iet-gibb.ch:5050/lst135928/169/to-do-appv2/todo-app:v2
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis-master
+      - redis-slave
+  redis-slave:
+    image: gitlab.iet-gibb.ch:5050/lst135928/169/to-do-appv1/redis-slave:v1
+    depends_on:
+      - redis-master
+  redis-master:
+    image: gitlab.iet-gibb.ch:5050/lst135928/169/to-do-appv1/redis-master:v1
+
+```
+
+## Portainer installiert
+
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/WGbgoudkg6NwYQs_Km7f64u_.png)
+
+w9Vu$YZ6!fzpegf
+
+### Portainer docker-compose.yml
+
+```yaml
+# docker-compose.yaml 
+version: '3'
+
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./portainer-data:/data
+    ports:
+      - 9000:9000
+
+```
+
+### App via Portainer installiert und im Portfolio festgehalten
+
+1. offne portainer
+1. local
+1. Gehe zu «stacks» und «add stack»
+1. name vergeben
+1. docker-compose file einfügen
+1. create
+
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/cBrNQfxhYfUIMoD-TMKDg8wN.png)
+
+## Den Sock-Shop via Docker Compose installiert. 
+
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/8JnE_gGIZcydNn4BLMzQ3sB7.png)
+
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/5V1hKBLWv2Zr6Gi0-fTxx1pY.png)
+
+### Vorgehen im Portfolio festgehalten. 
+
+1. docker compose installiert
+1. portainer installiert
+1. sock-shop installiert
+
+
+
+**clone git**
+
+```yaml
+git clone https://github.com/microservices-demo/microservices-demo
+
+```
+
+**In microservices-demo Ordner wechseln**
+
+```yaml
+cd microservices-demo
+
+```
+
+**docker compose**
+
+```yaml
+docker-compose -f deploy/docker-compose/docker-compose.yml up -d
+
+```
+
+_Quelle:_ [https://microservices-demo.github.io/deployment/docker-compose.html](https://microservices-demo.github.io/deployment/docker-compose.html)
+
+
+
+**docker-compose.yml**
+
+im Ordner /deploy/docker-compose/docker-compose.yml
 
 # Tag 4 - Repository
 
