@@ -1,0 +1,1 @@
+docker run -d -p 8000:80 gitlab.iet-gibb.ch:5050/lst135928/169/linosteffen-nginx-image:v1
