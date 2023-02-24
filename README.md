@@ -20,7 +20,7 @@ Tag 2 - Docker Images
 
 Tag 3 - Docker Compose
 
-Tag 4 - Repository
+Tag 4 - Eigenes Projekt
 
 Tag 5 -	Kubernetes
 
@@ -550,11 +550,169 @@ _Quelle:_ [https://microservices-demo.github.io/deployment/docker-compose.html](
 
 im Ordner ~/microservices-demo/deploy/docker-compose/docker-compose.yml
 
-# Tag 4 - Repository
+# Tag 4 - Eigenes Projekt
 
-xx
+Ich habe eine Nginx Webserver erstellt.
 
+Das Docker-compose File kann unter [https://github.com/LinoSteffen/Modul169](https://github.com/LinoSteffen/Modul169) heruntergeladen werden. Genauer wird dies jedoch im «Testversuch» unter diesem Beitrag beschrieben.
 
+## Mein Vorgehen
+
+### image erstellen und pushen
+
+**Pull docker image**
+
+```bash
+docker image pull nginx:latest
+
+```
+
+**Ordner erstellen**
+
+```bash
+mkdir nginx-projects
+
+```
+
+**Im Ordner folgende Dateien erstellen**
+
+```bash
+touch Dockerfile && touch index.html
+
+```
+
+**Dockerfile**
+
+```yaml
+# Verwenden Sie das offizielle Nginx-Image als Basis
+FROM nginx
+
+# Kopieren Sie die HTML-Datei in den Container
+COPY index.html /usr/share/nginx/html
+
+# Ändern Sie den Besitzer und die Berechtigungen der HTML-Datei
+RUN chown -R nginx:nginx /usr/share/nginx/html && chmod -R 755 /usr/share/nginx/html
+
+# Exponieren Sie den Port 80, den Nginx verwendet
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+
+```
+
+**index.html**
+
+```xml
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>linosteffen-test-webseite</title>
+    <style>
+      body {
+        background-color: black;
+        font-family: Arial, sans-serif;
+      }
+      h1 {
+        font-size: 3em;
+        text-align: center;
+        color: white;
+        margin-top: 70px;
+      }
+	   p {
+        font-size: 1.3em;
+        text-align: center;
+        color: gray;
+        margin-top: 30px;
+      }
+      h2 {
+        font-size: 2em;
+        text-align: center;
+        color: white;
+        margin-top: 70px;
+      }
+    </style>
+  </head>
+  <body>
+    <div algin="center">
+      <h1>Lino Steffen</h1>
+      <p>This is a small test website</p>
+      <h2>About</h2>
+      <div style="text-align: center;">
+        <img src="https://yt3.googleusercontent.com/HuPF5ereFLXCNbMrLwIJXUphhTUQFU8wJWK8fpA3niogik3STasG9zdH5NaBVyTw68uaTI-Q=s900-c-k-c0x00ffffff-no-rj" alt="Lino Steffen" style="width: 200px;">
+      </div>      
+      <p>Lino Steffen</br><a href="mailto:lst135928@stud.gibb.ch">lst135928@stud.gibb.ch</a>
+      </p>
+    </div>
+  </body>
+</html>
+
+```
+
+**Image erstellen**
+
+```yaml
+docker build -t linosteffen-nginx-project .
+
+```
+
+**login gitlab.iet-gibb.ch**
+
+```
+docker login gitlab.iet-gibb.ch:5050
+
+```
+
+**tag docker image**
+
+```
+docker image tag linosteffen-nginx-image:latest gitlab.iet-gibb.ch:5050/lst135928/169/linosteffen-nginx-image:v1
+
+```
+
+**push docker image**
+
+```
+docker push gitlab.iet-gibb.ch:5050/lst135928/169/linosteffen-nginx-image:v1
+
+```
+
+**docker-compose.yaml unter** [**https://github.com/LinoSteffen/Modul169**](https://github.com/LinoSteffen/Modul169) **erstellen**
+
+```yaml
+version: '1'
+
+services:
+  nginx:
+    image: gitlab.iet-gibb.ch:5050/lst135928/169/linosteffen-nginx-image:v1
+    ports:
+      - 8000:80
+
+```
+
+### Testversuch
+
+**git clonen**
+
+```bash
+git clone https://github.com/LinoSteffen/Modul169.git
+
+```
+
+**In Ordner wechseln**
+
+```bash
+cd Modul169
+
+```
+
+**docker compose**
+
+```bash
+docker-compose up -d
+
+```
+
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/rad6xzuXVa381Rq-pUYPq_jM.png)
 
 # Tag 5 -	Kubernetes
 
