@@ -8,7 +8,7 @@ Inf2021c
 
 03.02.2023
 
-Version 3.0
+Version 5.0
 
 
 
@@ -20,17 +20,17 @@ Tag 2 - Docker Images
 
 Tag 3 - Docker Compose
 
-Tag 4 - Eigenes Projekt
+Tag 4 - Eigenes Projekt - Nginx Webserver
 
 Tag 5 -	Kubernetes
 
-Tag 6 -  Kubernetes Deployments
+Tag 6 - Kubernetes Deployments
 
-Tag 7 -  Kubernetes Loadbalancer
+Tag 7 - Kubernetes Loadbalancer
 
-Tag 8 -  Überwachung
+Tag 8 - Überwachung
 
-Tag 9 -  Projekt
+Tag 9 - Projekt
 
 # Tag 1 - Docker Grundlagen
 
@@ -550,11 +550,43 @@ _Quelle:_ [https://microservices-demo.github.io/deployment/docker-compose.html](
 
 im Ordner ~/microservices-demo/deploy/docker-compose/docker-compose.yml
 
-# Tag 4 - Eigenes Projekt
+# Tag 4 - Eigenes Projekt - Nginx Webserver
 
 Ich habe eine Nginx Webserver erstellt.
 
-Das Docker-compose File kann unter [https://github.com/LinoSteffen/Modul169](https://github.com/LinoSteffen/Modul169) heruntergeladen werden. Genauer wird dies jedoch im «Testversuch» unter diesem Beitrag beschrieben.
+Das Docker-compose File kann unter [https://github.com/LinoSteffen/Modul169](https://github.com/LinoSteffen/Modul169) heruntergeladen werden. Genauer wird dies jedoch im in der Dokumentation unter «Webserver mit docker-compose File installieren» beschrieben.
+
+## Dokumentation
+
+### Blosses Image downloaden
+
+```yaml
+docker image pull gitlab.iet-gibb.ch:5050/lst135928/169/linosteffen-nginx-image:v1
+
+```
+
+### Webserver mit docker-compose File installieren
+
+**git clonen**
+
+```bash
+git clone https://github.com/LinoSteffen/Modul169.git
+
+```
+
+**In Ordner wechseln**
+
+```bash
+cd Modul169
+
+```
+
+**docker compose up**
+
+```bash
+docker-compose up -d
+
+```
 
 ## Mein Vorgehen
 
@@ -676,6 +708,8 @@ docker push gitlab.iet-gibb.ch:5050/lst135928/169/linosteffen-nginx-image:v1
 
 ```
 
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/OM3ABNdutmz9VRbqBHZ3mreX.png)
+
 **docker-compose.yaml unter** [**https://github.com/LinoSteffen/Modul169**](https://github.com/LinoSteffen/Modul169) **erstellen**
 
 ```yaml
@@ -716,9 +750,70 @@ docker-compose up -d
 
 # Tag 5 -	Kubernetes
 
-xx
+## Was ist Kubernetes?
 
+Kubernetes ist ein Orchestrator von cloud-native Microservice Anwendungen.
 
+Kubernetes, auch k8s genannt, ist eine Open Source-Plattform, die den Betrieb von [Linux®-Containern](https://www.redhat.com/de/topics/containers/whats-a-linux-container) automatisiert. Dabei werden viele der manuellen Prozesse, die mit der Bereitstellung und Skalierung von containerisierten Anwendungen einhergehen, eliminiert. Mit anderen Worten: Sie können Gruppen von Hosts, auf denen Linux-Container laufen, in [Clustern](https://www.redhat.com/de/topics/containers/what-is-a-kubernetes-cluster) zusammenfassen und diese mit Kubernetes auf einfache und effiziente Weise verwalten.
+
+Die CNCF ist eine Tochter der Linux Foundation, ihr gehört unter anderem der Open-Source-Code von Kubernetes. [https://landscape.cncf.io/](https://landscape.cncf.io/)
+
+_Quelle:_ [_redhat.com_](https://www.redhat.com/) _+ Internet + ich_
+
+## Was sind Microservices
+
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/rqgOgzTN36HNnGBGqjc7SiJ4.png)
+
+Microservices ist ein Architekturstil, bei dem eine Anwendung als eine Sammlung von kleinen, unabhängigen Diensten entwickelt wird, die jeweils eine spezifische Aufgabe erfüllen. Diese Dienste kommunizieren miteinander über standardisierte Schnittstellen und können separat bereitgestellt, skaliert und aktualisiert werden. Die Verwendung von Microservices kann die Flexibilität und Skalierbarkeit von Anwendungen verbessern und die Wartbarkeit erleichtern. Kubernetes ist ein häufig verwendetes Tool für die Verwaltung von Microservices, da es eine robuste Infrastruktur für die Bereitstellung und Skalierung von Containern bereitstellt und auch das automatische Management von Microservices unterstützt. Zusammen können Kubernetes und Microservices eine leistungsfähige und agile Lösung für die Entwicklung und Bereitstellung von Anwendungen bieten.
+
+_Quelle: Internet + ich_
+
+## Vergleich der lightweight Kubernetes Anwendungen. (Minikube, Micro8s, kind und K3s)
+
+Minikube, Microk8s, kind und K3s sind alle Kubernetes-Tools, die speziell für die lokale Entwicklung und den Test von Anwendungen entwickelt wurden.
+
+**Minikube** ist am einfachsten zu verwenden und hat die grösste Benutzerbasis.
+
+**Microk8s** ist das kleinste, schnellste und vollständig konforme Kubernetes System.
+
+**Kind** bietet schnelle lokale Tests
+
+**K3s** bietet eine schnelle Bereitstellung von Kubernetes-Anwendungen.
+
+## microk8s installieren
+
+```bash
+sudo snap install microk8s --classic --channel=1.26
+
+```
+
+**Wenn man nicht den Root Benutzer verwendet, muss man den Benutzer auf .kube berechtigen**
+
+```bash
+sudo usermod -a -G microk8s $USER && sudo chown -f -R $USER ~/.kube && sudo reboot
+
+```
+
+## lens installieren
+
+**Install snapd**
+
+```
+sudo apt update
+sudo apt install snapd
+
+```
+
+**Install Lens with snap**
+
+```
+sudo snap install kontena-lens --classic
+
+```
+
+## Mit Lens auf den Server verbinden.
+
+![](https://slabstatic.com/prod/uploads/grxbau6j/posts/images/WObwl1tswHO3o4y19wtwGZPI.png)
 
 # Tag 6 - Kubernetes Deployments
 
